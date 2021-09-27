@@ -6,10 +6,10 @@ const request = indexedDB.open('BudgetDB', budgetDatabaseVersion || 28);
 request.onupgradeneeded = function (e) {
     console.log('Upgrade to IndexDB');
 
-    const { oldDatabaseVersion } = e;
-    const newDatabaseVersion = e.newDatabaseVersion || db.version;
+    const { oldVersion } = e;
+    const newDatabaseVersion = e.newVersion || db.version;
   
-    console.log(`Database Updated from version ${oldDatabaseVersion} to ${newDatabaseVersion}`);
+    console.log(`Database Updated from version ${oldVersion} to ${newDatabaseVersion}`);
   
     db = e.target.result;
   
@@ -43,7 +43,7 @@ request.onupgradeneeded = function (e) {
               })
               .then((response) => response.json())
               .then((res) => {
-                  if (res.length != 0 ) {
+                  if (res.length !== 0 ) {
                     transaction = db.transaction(['BudgetStore'], 'readwrite');
 
                     const currentStore = transaction.objectStore('BudgetStore');
@@ -61,7 +61,7 @@ request.onupgradeneeded = function (e) {
       console.log("success")
       db = e.target.result;
 
-      if (navigator.online) {
+      if (navigator.onLine) {
           console.log("Internet connection established")
 
           checkDB()
