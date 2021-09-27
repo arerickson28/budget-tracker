@@ -1,7 +1,7 @@
 let db;
 let budgetDatabaseVersion;
 
-const request = indexedDB.open('BudgetDB', budgetDatabaseVersion || 21);
+const request = indexedDB.open('BudgetDB', budgetDatabaseVersion || 28);
 
 request.onupgradeneeded = function (e) {
     console.log('Upgrade to IndexDB');
@@ -35,7 +35,7 @@ request.onupgradeneeded = function (e) {
         if (allStoreRecords.result.length > 0) {
             fetch('/api/transaction/bulk', {
                 method: 'POST',
-                body: JSON.stringify(getAll.result),
+                body: JSON.stringify(allStoreRecords.result),
                 headers: {
                   Accept: 'application/json, text/plain, */*',
                   'Content-Type': 'application/json',
