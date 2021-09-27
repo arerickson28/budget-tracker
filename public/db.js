@@ -1,7 +1,6 @@
 let db;
 let budgetDatabaseVersion;
 
-// Create a request for a database
 const request = indexedDB.open('BudgetDB', budgetDatabaseVersion || 21);
 
 request.onupgradeneeded = function (e) {
@@ -32,7 +31,7 @@ request.onupgradeneeded = function (e) {
 
     const allStoreRecords = store.getAll();
 
-    getAll.onsuccess = function() {
+    allStoreRecords.onsuccess = function() {
         if (allStoreRecords.result.length > 0) {
             fetch('/api/transaction/bulk', {
                 method: 'POST',
@@ -43,7 +42,7 @@ request.onupgradeneeded = function (e) {
                 },
               })
               .then((response) => response.json())
-              .then((res => {
+              .then((res) => {
                   if (res.length != 0 ) {
                     transaction = db.transaction(['BudgetStore'], 'readwrite');
 
@@ -54,15 +53,30 @@ request.onupgradeneeded = function (e) {
                   }
               })
         }
-    }
+    };
 
   }
 
+  request.onsuccess = function(e) {
+      console.log("success")
+      db = e.target.result;
 
+      if (navigator.online) {
+          console.log("Internet connection established")
 
+          checkDB()
+      }
+  }
 
+  function saveRecord(record) {
+      console.log("record save triggered")
 
+      const transaction = db.transaction(['BudgetStore'], 'readwrite')
 
-  function saveRecord() {
+      const store = transaction.objectStore("BudgetStore")
+
+      store.add(record)
 
   }
+
+  window.addEventListener("online", checkDB)
